@@ -8,7 +8,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        System.out.println("Hello, World!");
+        System.out.println("Hello, World?!");
         return "redirect:/home.html"; // Redirects to static home.html
     }
 }
