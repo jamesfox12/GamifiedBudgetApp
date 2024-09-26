@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Run on pushes to the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+    - name: Run tests
+      run: mvn test
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        registry: <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+
+    - name: Build Docker image
+      run: |
+        docker build -t gamifiedbudgetapp .
+        docker tag gamifiedbudgetapp:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/gamifiedbudgetapp:latest
+
+    - name: Push Docker image to Amazon ECR
+      run: |
+        docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/gamifiedbudgetapp:latest
+
+    - name: Update Kubernetes deployment
+      run: |
+        aws eks update-kubeconfig --region <region> --name <cluster_name>
+        kubectl set image deployment/gamifiedbudgetapp-deployment gamifiedbudgetapp-container=<aws_account_id>.dkr.ecr.<region>.amazonaws.com/gamifiedbudgetapp:latest
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: <region>
