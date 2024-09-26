@@ -34,14 +34,16 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
 
+      - name: Debug Environment Variables
+        run: printenv
+
       - name: Build Docker image
         run: |
           docker build -t gamifiedbudgetapp .
           docker tag gamifiedbudgetapp:latest 739561935927.dkr.ecr.us-east-1.amazonaws.com/gamifiedbudgetapp:latest
 
       - name: Push Docker image to Amazon ECR
-        run: |
-          docker push 739561935927.dkr.ecr.us-east-1.amazonaws.com/gamifiedbudgetapp:latest
+        run: docker push 739561935927.dkr.ecr.us-east-1.amazonaws.com/gamifiedbudgetapp:latest
 
       - name: Update Kubernetes deployment
         run: |
