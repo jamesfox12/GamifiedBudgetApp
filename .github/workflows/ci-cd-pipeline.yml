@@ -31,7 +31,7 @@ jobs:
           aws-region: us-east-1  # Ensure your region is set correctly
 
       - name: Build JAR file
-        run: mvn package
+        run: mvn clean package
 
       - name: Log in to Amazon ECR
         id: login-ecr
