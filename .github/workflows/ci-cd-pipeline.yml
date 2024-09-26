@@ -32,6 +32,9 @@ jobs:
         with:
           region: us-east-1
 
+      - name: Debug Environment
+        run: echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+
       - name: Build Docker image
         run: |
           docker build -t gamifiedbudgetapp .
@@ -48,4 +51,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: us-east-1  # Hardcoding for debugging purposes
