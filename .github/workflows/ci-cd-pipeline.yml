@@ -29,11 +29,10 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          region: us-east-1
-
-      - name: Debug Environment
-        run: echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1 
 
       - name: Build Docker image
         run: |
@@ -51,4 +50,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1  # Hardcoding for debugging purposes
+          AWS_DEFAULT_REGION: us-east-1
